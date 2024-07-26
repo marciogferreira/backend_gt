@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Usuarios - Blog</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  </head>
+  <body>
+    
+    <a href="index.html">Painel</a>
+    <a href="usuarios.html">Usuários</a>
+    <a href="artigos.html">Artigos</a>
+    <a href="login.html">Sair</a>
+
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            <h1 class="text-center">Listagem de Artigos</h1>
+             <!-- Button trigger modal -->
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                Novo Artigo
+            </button>
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Titulo</th>
+                        <th scope="col">Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="lista_artigos">
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Cadastro de Artigo</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="">
+                    <div>
+                        <input type="text" id="titulo" class="form-control" placeholder="Titulo">
+                    </div>
+                    <div class="mt-3">
+                       <textarea class="form-control" name="conteudo" id="conteudo"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            <button type="button" class="btn btn-primary" onclick="cadastrarArtigo()" id="btn_salvar">Salvar</button>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        const baseUrl = 'http://localhost:3000/';
+
+        function listarArtigos() {
+            axios.get(baseUrl + 'posts')
+            .then((response) => {
+                console.log(response.data)
+
+                const usuarios = response.data
+                const tbody = document.getElementById('lista_artigos');
+                let html = ''
+                usuarios.map((item, indice) => {
+                    html += `
+                        <tr>
+                            <th scope="row">${indice + 1}</th>
+                            <td>${item.titulo}</td>
+                            
+                            <td>
+                                <button onclick="excluirArtigo(${item.id})" class="btn btn-danger btn-sm">Excluir</button>
+                            </td>
+                        </tr>
+                    `
+                })
+                tbody.innerHTML = html;
+            })
+            .catch((error) => {
+                console.error(error)
+            });
+        }
+
+        listarArtigos()
+
+        function cadastrarArtigo() {
+            const titulo = document.getElementById('titulo').value;
+            const conteudo = document.getElementById('conteudo').value;
+            
+
+            const dados = {
+                titulo: titulo, 
+                conteudo: conteudo
+            }
+            axios.post(baseUrl + 'posts', dados)
+            .then(response => {
+                alert(response.data.message)
+                listarArtigos()
+                document.getElementById('titulo').value = '';
+                document.getElementById('conteudo').value = '';
+            })
+            .catch(error => {
+                console.error(error)
+            });
+        }
+
+        function excluirArtigo(id) {
+
+            const check = confirm(`Deseja excluir o artigo com ID: ${id}?`);
+            if(check) {
+                axios.delete(baseUrl + 'posts/' + id)
+                .then(response => {
+                    alert(response.data.message)
+                    listarArtigos()
+                })
+                .catch(error => {
+                    console.error(error)
+                });
+            }
+            
+        }
+    </script>
+  </body>
+</html>
