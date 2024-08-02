@@ -1,44 +1,41 @@
-class UserModel {
+const Connection = require('../config/Connection')
+const { DataTypes, Model } = require('sequelize')
+const UserTypesModel = require('./UserTypesModel');
+class UserModel extends Model {}
 
-    listaUsuarios = [
-        {
-            id: 1,
-            nome: 'João',
-            email: 'joao@example.com',
-            senha: '123123'
+UserModel.init(
+    {
+        id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true
+        },
+        email: {
+            type: DataTypes.STRING(100),
+            allowNull: false
+        },
+        username: {
+            type: DataTypes.STRING(50),
+            allowNull: false
+        },
+        password: {
+            type: DataTypes.STRING(100),
+            allowNull: false
+        },
+        type_id: {
+            type: DataTypes.INTEGER,
+            references: {
+                model: UserTypesModel,
+                key: 'id'
+            },
+            allowNull: false
         }
-    ]
-
-    login(login, senha) {
-        return this.listaUsuarios.find(user => user.email === login && user.senha === senha);
+    },
+    {
+        tableName: 'users',
+        sequelize: Connection
     }
-
-    findAll() {
-        return this.listaUsuarios;
-    }
-
-    findId(id) {
-        return this.listaUsuarios.find(user => user.id === id);
-    }
-
-    create(data) {
-        data.id = this.listaUsuarios.length + 1;
-        this.listaUsuarios.push(data);
-        return data;
-    }
-    
-    update(id, data) {
-        const userIndex = this.listaUsuarios.findIndex(user => user.id === id);
-        this.listaUsuarios[userIndex] = data;
-        return data;
-    }
-
-    delete(id) {
-        const userIndex = this.listaUsuarios.findIndex(user => user.id === id);
-        this.listaUsuarios.splice(userIndex, 1);
-        return true;
-    }
-}
+)
 
 
 module.exports = UserModel;

@@ -1,23 +1,23 @@
-const PostModel = require("../models/PostModel");
+const CommentModel = require("../models/CommentModel");
 
-class PostController {
+class CommentsController {
 
     async findAll(request, response) {
-        const dados = await PostModel.findAll();
+        const dados = await CommentModel.findAll();
         return response.status(200).json(dados);
     }
 
     async findId(request, response) {
         const id = request.params.id;
-        const dados = await PostModel.findByPk(id);
+        const dados = await CommentModel.findByPk(id);
         return response.status(200).json(dados);
     }
 
     async create(request, response) {
         const dados = request.body;
-        const retorno = await PostModel.create(dados);
+        const retorno = await CommentModel.create(dados);
         return response.json({
-            message: 'Post criado com sucesso!',
+            message: 'Comentário criado com sucesso!',
             data: retorno
         });
     }
@@ -26,21 +26,21 @@ class PostController {
         const id = request.params.id;
         const dados = request.body;
         
-        const retorno = PostModel.update(dados, { where: { id: id } });
+        const retorno = CommentModel.update(dados, { where: { id: id } });
         return response.json({
-            message: 'Post atualizado com sucesso!',
+            message: 'Comentário atualizado com sucesso!',
             data: retorno
         });
     }
 
     async delete(request, response) {
         const id = request.params.id;
-        await PostModel.destroy({ where: { id: id} });
+        await CommentModel.destroy({ where: { id: id} });
         return response.json({
-            message: 'Post removido com sucesso!'
+            message: 'Comentário removido com sucesso!'
         });
     }
     
 }
 
-module.exports = PostController;
+module.exports = CommentsController;

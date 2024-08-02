@@ -8,7 +8,6 @@ class AuthController {
         const { login, senha } = request.body;
         const dados = AuthController.userModel.login(login, senha);
 
-
         // JSONWEBTOKEN
         // CRIPTOGRAFA OS DADOS PARA JWT
         console.log(dados)
